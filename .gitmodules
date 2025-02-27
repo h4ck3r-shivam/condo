@@ -58,3 +58,6 @@
 [submodule "apps/announcements"]
     path = apps/announcements
 	url = git@github.com:open-condo-software/condo-announcements.git
+[submodule "apps/resident-bot"]
+    path = apps/resident-bot
+    url = git@github.com:open-condo-software/condo-resident-bot.git
