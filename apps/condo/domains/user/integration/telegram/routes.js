@@ -2,8 +2,8 @@ const { generators } = require('openid-client')
 
 const conf = require('@open-condo/config')
 const { fetch } = require('@open-condo/keystone/fetch')
+const { getKVClient } = require('@open-condo/keystone/kv')
 const { getLogger } = require('@open-condo/keystone/logging')
-const { getRedisClient } = require('@open-condo/keystone/redis')
 const { getSchemaCtx } = require('@open-condo/keystone/schema')
 
 const {
@@ -28,14 +28,14 @@ const { startAuthedSession } = require('./utils')
 
 const TELEGRAM_AUTH_CONFIG = conf.TELEGRAM_AUTH_CONFIG ? JSON.parse(conf.TELEGRAM_AUTH_CONFIG) : {}
 const logger = getLogger('telegram-auth')
-const redisClient = getRedisClient()
+const redisClient = getKVClient()
 
 //Currently anyone can use this auth but we want to restrict access for random clients
 
 class TelegramAuthRoutes {
-    constructor () {
-        validateTelegramAuthConfig(TELEGRAM_AUTH_CONFIG)
-    }
+    // constructor () {
+    //     //validateTelegramAuthConfig(TELEGRAM_AUTH_CONFIG)
+    // }
 
     async startAuth (req, res, next) {
         try {

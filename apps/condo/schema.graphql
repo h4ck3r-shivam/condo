@@ -2118,6 +2118,7 @@ input UserExternalIdentityHistoryRecordsCreateInput {
 }
 
 enum UserExternalIdentityIdentityTypeType {
+  telegram_auth
   apple_id
   sber_id
   sbbol
@@ -66798,7 +66799,6 @@ enum B2BAppIconType {
   ArrowRight
   BarChartHorizontal
   BarChartVertical
-  Bell
   Bill
   Briefcase
   Building
