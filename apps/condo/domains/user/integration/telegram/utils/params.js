@@ -66,7 +66,7 @@ function parseJson (data) {
 
 function decodeIdToken (idToken) {
     console.error(idToken)
-    const decoded = atob(idToken.split('.')[1])
+    const decoded = Buffer.from(idToken.split('.')[1], 'base64').toString('utf-8')
     return parseJson(decoded)
 }
 
