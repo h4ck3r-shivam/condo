@@ -2318,8 +2318,6 @@
   "pages.condo.property.form.ConfirmDeleteMessage": "Será imposible restaurarla",
   "pages.condo.property.form.ConfirmDeleteTitle": "¿Eliminar la comunidad?",
   "pages.condo.property.form.DeleteLabel": "Eliminar la comunidad",
-  "pages.condo.property.form.EmptyResidents.header": "La lista de vecinos está vacía por ahora",
-  "pages.condo.property.form.EmptyResidents.text": "Cree uno cargando un archivo de Excel de vecinos de esta comunidad",
   "pages.condo.property.form.NamePlaceholder": "Por ejemplo, Europeo",
   "pages.condo.property.form.ResidentsTabTitle": "Vecinos",
   "pages.condo.property.form.SuccessNotification": "La propiedad {dirección} se ha añadido correctamente",
