@@ -23,7 +23,7 @@ The script will:
 - Run database migrations
 - Start the Condo application
 
-3. Access the application at http://localhost:3000 (or the port you configured)
+3. Access the application at http://localhost:7311
 
 ## Available Scripts
 
