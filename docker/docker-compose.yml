@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16.8
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: condo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - condo_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis
+  redis:
+    image: redis:6.2
+    command: ["redis-server", "--appendonly", "yes", "--databases", "64"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - condo_network
+    restart: unless-stopped
+
+  # Main Condo Application
+  condo-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/condo
+      REDIS_URL: redis://redis:6379/0
+      COOKIE_SECRET: ${COOKIE_SECRET:-please-change-this-cookie-secret-to-a-secure-random-string}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      FILE_FIELD_ADAPTER: ${FILE_FIELD_ADAPTER:-local}
+      LOCAL_FILE_STORAGE_DIR: ${LOCAL_FILE_STORAGE_DIR:-/app/storage}
+      PORT: ${PORT:-3000}
+      DEFAULT_TEST_ADMIN_IDENTITY: ${DEFAULT_TEST_ADMIN_IDENTITY:-admin@example.com}
+      DEFAULT_TEST_ADMIN_SECRET: ${DEFAULT_TEST_ADMIN_SECRET:-admin123}
+      # Add additional environment variables as needed
+    volumes:
+      - condo_storage:/app/storage
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - condo_network
+    command: ["yarn", "workspace", "@app/condo", "start"]
+    restart: unless-stopped
+
+  # Worker for async tasks
+  condo-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/condo
+      REDIS_URL: redis://redis:6379/0
+      COOKIE_SECRET: ${COOKIE_SECRET:-please-change-this-cookie-secret-to-a-secure-random-string}
+      FILE_FIELD_ADAPTER: ${FILE_FIELD_ADAPTER:-local}
+      LOCAL_FILE_STORAGE_DIR: ${LOCAL_FILE_STORAGE_DIR:-/app/storage}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - condo_network
+    command: ["yarn", "workspace", "@app/condo", "worker"]
+    restart: unless-stopped
+
+networks:
+  condo_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  condo_storage: 
