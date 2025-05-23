@@ -39,23 +39,23 @@ services:
   condo-app:
     build:
       context: ..
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/condo
       REDIS_URL: redis://redis:6379/0
       COOKIE_SECRET: ${COOKIE_SECRET:-please-change-this-cookie-secret-to-a-secure-random-string}
-      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      SERVER_URL: ${SERVER_URL:-http://localhost:7311}
       FILE_FIELD_ADAPTER: ${FILE_FIELD_ADAPTER:-local}
       LOCAL_FILE_STORAGE_DIR: ${LOCAL_FILE_STORAGE_DIR:-/app/storage}
-      PORT: ${PORT:-3000}
+      PORT: ${PORT:-7311}
       DEFAULT_TEST_ADMIN_IDENTITY: ${DEFAULT_TEST_ADMIN_IDENTITY:-admin@example.com}
       DEFAULT_TEST_ADMIN_SECRET: ${DEFAULT_TEST_ADMIN_SECRET:-admin123}
       # Add additional environment variables as needed
     volumes:
       - condo_storage:/app/storage
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${PORT:-7311}:${PORT:-7311}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -70,7 +70,7 @@ services:
   condo-worker:
     build:
       context: ..
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/condo
